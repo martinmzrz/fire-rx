@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.util.Log
 import com.firefly.fire_rx.FireRx
 import com.firefly.fire_rx.defaultSubscribe
+import com.firefly.fire_rx.onFailure
 import com.firefly.fire_rx.onSuccess
+import io.reactivex.Completable
 import io.reactivex.Single
 
 class MainActivity : AppCompatActivity() {
@@ -15,14 +17,25 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        Single.just("Hola mundo").onSuccess { result ->
-            Log.d("Fire-Rx-Demo", result)
+        Single.just("Hello World").onSuccess { result ->
+            Log.d("Fire-Rx", result)
+        }.onFailure {
+            Log.d("Fire-Rx", "code not executed")
+        }.defaultSubscribe(fireRx)
+
+        Single.error<String>(Exception("Your circuit's dead")).onSuccess {
+            Log.d("Fire-Rx", "code not executed")
+        }.onFailure {
+            Log.e("Fire-Rx", "code executed", it)
+        }.defaultSubscribe(fireRx)
+
+        Completable.complete().onSuccess {
+            Log.d("Fire-Rx", "Task completed")
         }.defaultSubscribe(fireRx)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-
         fireRx.dispose()
     }
 }

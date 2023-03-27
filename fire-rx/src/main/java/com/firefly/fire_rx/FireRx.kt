@@ -22,10 +22,13 @@ class FireRx() {
         if (fireDisposable.failureCallback == null) {
             fireDisposable.failureCallback = mDefaultFailureCallback
         } else {
-            fireDisposable.failureCallback = {
-                fireDisposable.failureCallback?.invoke(it)
+            val oldFailureCallback = fireDisposable.failureCallback
+
+            val newFailureCallback: (Throwable) -> Unit = {
+                oldFailureCallback?.invoke(it)
                 mDefaultFailureCallback?.invoke(it)
             }
+            fireDisposable.failureCallback = newFailureCallback
         }
         mDisposables.add(fireDisposable.execute(subscribeOn, observeOn))
     }
