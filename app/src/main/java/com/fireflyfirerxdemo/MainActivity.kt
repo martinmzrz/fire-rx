@@ -5,9 +5,9 @@ import android.os.Bundle
 import android.util.Log
 import com.firefly.fire_rx.FireCompletable.Companion.onSuccess
 import com.firefly.fire_rx.FireRx
-import com.firefly.fire_rx.FireSingle.Companion.defaultSubscribe
 import com.firefly.fire_rx.FireSingle.Companion.onFailure
 import com.firefly.fire_rx.FireSingle.Companion.onSuccess
+import com.firefly.fire_rx.defaultSubscribe
 
 import io.reactivex.Completable
 import io.reactivex.Single
