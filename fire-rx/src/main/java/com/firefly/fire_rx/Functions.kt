@@ -85,6 +85,10 @@ fun <T> Observable<T>.subscribeOnIOAndObserveOnMain(): Observable<T> {
         .observeOnMain()
 }
 
+fun FireDisposable.defaultSubscribe(rx: FireRx){
+    rx.execute(this, Schedulers.io(), AndroidSchedulers.mainThread())
+}
+
 fun Disposable?.disposeIfOpen() {
     if (this?.isDisposed == false) {
         this.dispose()

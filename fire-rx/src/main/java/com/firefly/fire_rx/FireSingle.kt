@@ -60,9 +60,5 @@ class FireSingle<T>(private val single: Single<T>): FireDisposable {
                 this.failureCallback = failureCallback
             }
         }
-
-        fun FireDisposable.defaultSubscribe(rx: FireRx){
-            rx.execute(this, Schedulers.io(), AndroidSchedulers.mainThread())
-        }
     }
 }

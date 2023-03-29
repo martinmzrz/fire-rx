@@ -59,9 +59,5 @@ class FireCompletable(private val completable: Completable): FireDisposable {
                 this.onComplete = onComplete
             }
         }
-
-        fun Completable.defaultSubscribe(rx: FireRx){
-            rx.execute(FireCompletable(this), Schedulers.io(), AndroidSchedulers.mainThread())
-        }
     }
 }

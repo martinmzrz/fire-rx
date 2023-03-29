@@ -46,9 +46,5 @@ class FireObservable<T>(private val observable: Observable<T>) : FireDisposable 
                 this.failureCallback = failureCallback
             }
         }
-
-        fun <T> FireObservable<T>.defaultSubscribe(fireRx: FireRx) {
-            fireRx.execute(this, Schedulers.io(), AndroidSchedulers.mainThread())
-        }
     }
 }
