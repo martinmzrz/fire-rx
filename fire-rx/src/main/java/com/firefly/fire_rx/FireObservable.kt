@@ -23,7 +23,7 @@ class FireObservable<T>(private val observable: Observable<T>) : FireDisposable 
     }
 
     companion object {
-        fun <T> Observable<T>.onNext(onNextCallback: ((T) -> Unit)): FireObservable<T> {
+        fun <T> Observable<T>.onSuccess(onNextCallback: ((T) -> Unit)): FireObservable<T> {
             return FireObservable(this).apply {
                 this.onNext = onNextCallback
             }
@@ -35,16 +35,36 @@ class FireObservable<T>(private val observable: Observable<T>) : FireDisposable 
             }
         }
 
-        fun <T> FireObservable<T>.onNext(onNextCallback: ((T) -> Unit)): FireObservable<T> {
+        fun <T> FireObservable<T>.onSuccess(onNextCallback: ((T) -> Unit)): FireObservable<T> {
             return this.apply {
                 this.onNext = onNextCallback
             }
         }
 
-        fun <T> FireObservable<T>.onFailure(failureCallback: ((Throwable) -> Unit)): FireObservable<T> {
-            return this.apply {
-                this.failureCallback = failureCallback
-            }
+        fun <T> Observable<T>.subscribeOnMain(): Observable<T> {
+            return this.subscribeOn(AndroidSchedulers.mainThread())
+        }
+
+        fun <T> Observable<T>.subscribeOnIO(): Observable<T> {
+            return this.subscribeOn(Schedulers.io())
+        }
+
+        fun <T> Observable<T>.observeOnMain(): Observable<T> {
+            return this.observeOn(AndroidSchedulers.mainThread())
+        }
+
+        fun <T> Observable<T>.subscribeOnIOAndObserveOnMain(): Observable<T> {
+            return this.subscribeOnIO()
+                .observeOnMain()
+        }
+
+        fun <T> Observable<T>.defaultSubscribe(onCallback: ((T?, Throwable?) -> Unit)): Disposable {
+            return this.subscribeOnIOAndObserveOnMain()
+                .subscribe({
+                    onCallback.invoke(it, null)
+                }, {
+                    onCallback.invoke(null, it)
+                })
         }
     }
 }

@@ -55,9 +55,31 @@ class FireSingle<T>(private val single: Single<T>): FireDisposable {
             }
         }
 
-        fun <T> FireSingle<T>.onFailure(failureCallback: ((Throwable) -> Unit)): FireSingle<T>{
-            return this.apply {
-                this.failureCallback = failureCallback
+        fun <T> Single<T>.subscribeOnMain(): Single<T> {
+            return this.subscribeOn(AndroidSchedulers.mainThread())
+        }
+
+        fun <T> Single<T>.subscribeOnIO(): Single<T> {
+            return this.subscribeOn(Schedulers.io())
+        }
+
+        fun <T> Single<T>.observeOnMain(): Single<T> {
+            return this.observeOn(AndroidSchedulers.mainThread())
+        }
+
+        fun <T> Single<T>.subscribeOnIOAndObserveOnMain(): Single<T> {
+            return this.subscribeOnIO()
+                .observeOnMain()
+        }
+
+        fun <T> Single<T>.defaultSubscribe(onCallback: ((T?, Throwable?) -> Unit)): Disposable {
+            return this.subscribeOnIOAndObserveOnMain()
+                .subscribe(onCallback)
+        }
+
+        fun <T> Single<T>.onErrorResume(resumeFunction: (Throwable) -> T): Single<T> {
+            return this.onErrorResumeNext {
+                Single.just(resumeFunction.invoke(it))
             }
         }
     }

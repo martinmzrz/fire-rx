@@ -10,20 +10,32 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        Single.just("Hello World").onSuccess { result ->
-            Log.d("Fire-Rx", result)
+        Single.just("Hello Single").onSuccess { result ->
+            Log.d(LOG_TAG, result)
         }.onFailure {
-            Log.d("Fire-Rx", "code not executed")
+            Log.d(LOG_TAG, "code not executed")
         }.defaultSubscribe(fireRx)
 
         Single.error<String>(Exception("Your circuit's dead")).onSuccess {
-            Log.d("Fire-Rx", "code not executed")
+            Log.d(LOG_TAG, "code not executed")
         }.onFailure {
-            Log.e("Fire-Rx", "code executed", it)
+            Log.e(LOG_TAG, "code executed", it)
         }.defaultSubscribe(fireRx)
 
         Completable.complete().onSuccess {
-            Log.d("Fire-Rx", "Task completed")
+            Log.d(LOG_TAG, "Task completed")
+        }.defaultSubscribe(fireRx)
+
+        Flowable.interval(2, TimeUnit.SECONDS).onSuccess {
+            Log.d(LOG_TAG, "Flowable -> $it")
+        }.defaultSubscribe(fireRx)
+
+        Observable.interval(2, TimeUnit.SECONDS).onSuccess {
+            Log.d(LOG_TAG, "Observable -> $it")
+        }.defaultSubscribe(fireRx)
+
+        Maybe.just("Hello Maybe").onSuccess { result ->
+            Log.d(LOG_TAG, result)
         }.defaultSubscribe(fireRx)
     }
 
@@ -33,6 +45,8 @@ class MainActivity : AppCompatActivity() {
     }
 }
 ```
+
+The ```defaultSubscribe``` method subscribe on the IO thread and observe on the main thread.
 
 ## How to use
 Add Jitpack in your root build.gradle

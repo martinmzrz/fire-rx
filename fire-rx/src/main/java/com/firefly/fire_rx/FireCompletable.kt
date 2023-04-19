@@ -48,16 +48,35 @@ class FireCompletable(private val completable: Completable): FireDisposable {
             }
         }
 
-        fun FireCompletable.onFailure(failureCallback: (Throwable) -> Unit): FireCompletable {
-            return this.apply {
-                this.failureCallback = failureCallback
-            }
-        }
-
         fun FireCompletable.onComplete(onComplete: (Throwable?) -> Unit): FireCompletable {
             return this.apply {
                 this.onComplete = onComplete
             }
+        }
+
+        fun Completable.subscribeOnMain(): Completable {
+            return this.subscribeOn(AndroidSchedulers.mainThread())
+        }
+
+        fun Completable.subscribeOnIO(): Completable {
+            return this.subscribeOn(Schedulers.io())
+        }
+
+        fun Completable.observeOnMain(): Completable {
+            return this.observeOn(AndroidSchedulers.mainThread())
+        }
+
+        fun Completable.subscribeOnIOAndObserveOnMain(): Completable {
+            return subscribeOnIO()
+                .observeOnMain()
+        }
+
+        fun Completable.defaultSubscribe(onCallback: (Throwable?) -> Unit): Disposable {
+            return this.subscribeOnIOAndObserveOnMain().subscribe({
+                onCallback(null)
+            }, { throwable ->
+                onCallback(throwable)
+            })
         }
     }
 }
