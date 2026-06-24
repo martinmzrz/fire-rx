@@ -11,14 +11,20 @@ task sourceJar(type: Jar) {
 
 android {
     namespace 'com.firefly.fire_rx'
-    compileSdk 33
+    compileSdk 36
 
     defaultConfig {
         minSdk 21
-        targetSdk 33
+        targetSdk 36
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+    }
+
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+        }
     }
 
     buildTypes {
@@ -42,8 +48,8 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
-    implementation 'io.reactivex.rxjava2:rxjava:2.2.19'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    implementation 'io.reactivex.rxjava3:rxjava:3.1.12'
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.2'
 }
 
 publishing {
@@ -51,7 +57,7 @@ publishing {
         release(MavenPublication) {
             groupId = 'com.firefly'
             artifactId = 'fire_rx'
-            version = '1.0'
+            version = '2.0'
 
             afterEvaluate {
                 from components.release

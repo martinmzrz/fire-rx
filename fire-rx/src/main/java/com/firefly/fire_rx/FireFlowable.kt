@@ -1,12 +1,12 @@
 package com.firefly.fire_rx
 
-import io.reactivex.Flowable
-import io.reactivex.Scheduler
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 
-class FireFlowable<T>(private val flowable: Flowable<T>) : FireDisposable {
+class FireFlowable<T : Any>(private val flowable: Flowable<T>) : FireDisposable {
     private var successCallback: ((T) -> Unit)? = null
     private var onComplete: ((T?, Throwable?) -> Unit)? = null
 
@@ -26,54 +26,54 @@ class FireFlowable<T>(private val flowable: Flowable<T>) : FireDisposable {
     }
 
     companion object {
-        fun <T> Flowable<T>.onSuccess(successCallback: ((T) -> Unit)): FireFlowable<T> {
+        fun <T : Any> Flowable<T>.onSuccess(successCallback: ((T) -> Unit)): FireFlowable<T> {
             return FireFlowable(this).apply {
                 this.successCallback = successCallback
             }
         }
 
-        fun <T> Flowable<T>.onComplete(onComplete: (T?, Throwable?) -> Unit): FireFlowable<T> {
+        fun <T : Any> Flowable<T>.onComplete(onComplete: (T?, Throwable?) -> Unit): FireFlowable<T> {
             return FireFlowable(this).apply {
                 this.onComplete = onComplete
             }
         }
 
-        fun <T> Flowable<T>.onFailure(failureCallback: ((Throwable) -> Unit)): FireFlowable<T> {
+        fun <T : Any> Flowable<T>.onFailure(failureCallback: ((Throwable) -> Unit)): FireFlowable<T> {
             return FireFlowable(this).apply {
                 this.failureCallback = failureCallback
             }
         }
 
-        fun <T> FireFlowable<T>.onSuccess(successCallback: ((T) -> Unit)): FireFlowable<T> {
+        fun <T : Any> FireFlowable<T>.onSuccess(successCallback: ((T) -> Unit)): FireFlowable<T> {
             return this.apply {
                 this.successCallback = successCallback
             }
         }
 
-        fun <T> FireFlowable<T>.onComplete(onComplete: (T?, Throwable?) -> Unit): FireFlowable<T> {
+        fun <T : Any> FireFlowable<T>.onComplete(onComplete: (T?, Throwable?) -> Unit): FireFlowable<T> {
             return this.apply {
                 this.onComplete = onComplete
             }
         }
 
-        fun <T> Flowable<T>.subscribeOnMain(): Flowable<T> {
+        fun <T : Any> Flowable<T>.subscribeOnMain(): Flowable<T> {
             return this.subscribeOn(AndroidSchedulers.mainThread())
         }
 
-        fun <T> Flowable<T>.subscribeOnIO(): Flowable<T> {
+        fun <T : Any> Flowable<T>.subscribeOnIO(): Flowable<T> {
             return this.subscribeOn(Schedulers.io())
         }
 
-        fun <T> Flowable<T>.observeOnMain(): Flowable<T> {
+        fun <T : Any> Flowable<T>.observeOnMain(): Flowable<T> {
             return this.observeOn(AndroidSchedulers.mainThread())
         }
 
-        fun <T> Flowable<T>.subscribeOnIOAndObserveOnMain(): Flowable<T> {
+        fun <T : Any> Flowable<T>.subscribeOnIOAndObserveOnMain(): Flowable<T> {
             return this.subscribeOnIO()
                 .observeOnMain()
         }
 
-        fun <T> Flowable<T>.defaultSubscribe(onNextCallback: ((T) -> Unit)): Disposable {
+        fun <T : Any> Flowable<T>.defaultSubscribe(onNextCallback: ((T) -> Unit)): Disposable {
             return this.subscribeOnIOAndObserveOnMain()
                 .subscribe(onNextCallback)
         }

@@ -1,17 +1,19 @@
 package com.firefly.fire_rx
 
-import io.reactivex.Completable
-import io.reactivex.Scheduler
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.Disposable
 
 class FireCompletable(private val completable: Completable): FireDisposable {
+
     private var successCallback: (() -> Unit)? = null
     private var onComplete: ((Throwable?) -> Unit)? = null
     override var failureCallback: ((Throwable) -> Unit)? = null
 
-    override fun execute(subscribeOn: Scheduler, observeOn: Scheduler): Disposable {
+
+    override  fun execute(subscribeOn: Scheduler, observeOn: Scheduler): Disposable {
         return completable.subscribeOn(subscribeOn)
             .observeOn(observeOn)
             .subscribe({

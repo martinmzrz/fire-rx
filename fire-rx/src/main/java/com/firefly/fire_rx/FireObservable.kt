@@ -1,12 +1,12 @@
 package com.firefly.fire_rx
 
-import io.reactivex.Observable
-import io.reactivex.Scheduler
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.disposables.Disposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 
-class FireObservable<T>(private val observable: Observable<T>) : FireDisposable {
+class FireObservable<T : Any>(private val observable: Observable<T>) : FireDisposable {
     private var onNext: ((T) -> Unit)? = null
     override var failureCallback: ((Throwable) -> Unit)? = null
 
@@ -23,42 +23,42 @@ class FireObservable<T>(private val observable: Observable<T>) : FireDisposable 
     }
 
     companion object {
-        fun <T> Observable<T>.onSuccess(onNextCallback: ((T) -> Unit)): FireObservable<T> {
+        fun <T : Any> Observable<T>.onSuccess(onNextCallback: ((T) -> Unit)): FireObservable<T> {
             return FireObservable(this).apply {
                 this.onNext = onNextCallback
             }
         }
 
-        fun <T> Observable<T>.onFailure(failureCallback: ((Throwable) -> Unit)): FireObservable<T> {
+        fun <T : Any> Observable<T>.onFailure(failureCallback: ((Throwable) -> Unit)): FireObservable<T> {
             return FireObservable(this).apply {
                 this.failureCallback = failureCallback
             }
         }
 
-        fun <T> FireObservable<T>.onSuccess(onNextCallback: ((T) -> Unit)): FireObservable<T> {
+        fun <T : Any> FireObservable<T>.onSuccess(onNextCallback: ((T) -> Unit)): FireObservable<T> {
             return this.apply {
                 this.onNext = onNextCallback
             }
         }
 
-        fun <T> Observable<T>.subscribeOnMain(): Observable<T> {
+        fun <T : Any> Observable<T>.subscribeOnMain(): Observable<T> {
             return this.subscribeOn(AndroidSchedulers.mainThread())
         }
 
-        fun <T> Observable<T>.subscribeOnIO(): Observable<T> {
+        fun <T : Any> Observable<T>.subscribeOnIO(): Observable<T> {
             return this.subscribeOn(Schedulers.io())
         }
 
-        fun <T> Observable<T>.observeOnMain(): Observable<T> {
+        fun <T : Any> Observable<T>.observeOnMain(): Observable<T> {
             return this.observeOn(AndroidSchedulers.mainThread())
         }
 
-        fun <T> Observable<T>.subscribeOnIOAndObserveOnMain(): Observable<T> {
+        fun <T : Any> Observable<T>.subscribeOnIOAndObserveOnMain(): Observable<T> {
             return this.subscribeOnIO()
                 .observeOnMain()
         }
 
-        fun <T> Observable<T>.defaultSubscribe(onCallback: ((T?, Throwable?) -> Unit)): Disposable {
+        fun <T : Any> Observable<T>.defaultSubscribe(onCallback: ((T?, Throwable?) -> Unit)): Disposable {
             return this.subscribeOnIOAndObserveOnMain()
                 .subscribe({
                     onCallback.invoke(it, null)
